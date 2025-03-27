@@ -4,11 +4,12 @@ const { Client: SSHClient } = require('ssh2');
 require('dotenv').config(); // Load environment variables from .env file
 
 // Get the Discord token and SSH credentials from the environment variables
-const DISCORD_TOKEN = process.env.DISCORD_TOKEN; // Discord Bot Token from .env
-const SSH_HOST = process.env.SERVER_ADDR; // Server the bot will send commands to in .env
-const SSH_PORT = process.env.SSH_PORT; // SSH port in .env
+const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
+const SSH_HOST = process.env.SSH_HOST; // SSH host from .env
+const SSH_PORT = process.env.SSH_PORT; // SSH port from .env
 const SSH_USER = process.env.SSH_USER; // SSH username from .env
 const SSH_PASSWORD = process.env.SSH_PASSWORD; // SSH password from .env
+const SUDO_COMMAND_PASSWORD = process.env.SUDO_COMMAND_PASSWORD; // Sudo password from .env
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
 
@@ -115,7 +116,7 @@ client.on('messageCreate', async (message) => {
         } else {
             message.reply("You need to mention a channel to delete!");
         }
- }
+    }
 
     // Command to delete the server (requires admin rights)
     if (message.content === '!deleteServer') {
@@ -142,26 +143,24 @@ client.on('messageCreate', async (message) => {
         executeSSHCommand(command, message);
     }
 
-    // Command to restart the bot
+    // Command to restart the server
     if (message.content === '!restart') {
         if (!message.member.permissions.has('ADMINISTRATOR')) {
-            return message.reply("You don't have permission to restart the bot.");
+            return message.reply("You don't have permission to restart the server.");
         }
 
-        message.channel.send('Restarting the bot...').then(() => {
-            process.exit(); // This will restart the bot if managed by a process manager
-        });
+        const command = `echo ${SUDO_COMMAND_PASSWORD} | sudo -S reboot`;
+        executeSSHCommand(command, message);
     }
 
-    // Command to shut down the bot
+    // Command to shut down the server
     if (message.content === '!shutdown') {
-        if (!message.member.permissions.has('ADMINISTRATOR')) {
-            return message.reply("You don't have permission to shut down the bot.");
+        if (!message.member.permissions.has('ADMINISTRATOR ')) {
+            return message.reply("You don't have permission to shut down the server.");
         }
 
-        message.channel.send('Shutting down the bot...').then(() => {
-            process.exit(); // This will shut down the bot
-        });
+        const command = `echo ${SUDO_COMMAND_PASSWORD} | sudo -S shutdown now`;
+        executeSSHCommand(command, message);
     }
 });
 
