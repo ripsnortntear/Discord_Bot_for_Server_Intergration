@@ -1,6 +1,6 @@
 {
-   "name": "DBSI",
-   "version": "1.0.0",
+   "name": "dbsi",
+   "version": "1.0.0.1",
    "description": "A Discord Bot for Server Intergration",
    "main": "bot.js",
    "keywords": [
