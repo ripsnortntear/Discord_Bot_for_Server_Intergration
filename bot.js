@@ -51,6 +51,14 @@ function executeSSHCommand(command, message) {
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return; // Ignore bot messages
 
+    // Check if the message is from the server owner
+    const guild = message.guild;
+    const ownerId = guild.ownerId; // Get the owner ID of the guild
+
+    if (message.author.id !== ownerId) {
+        return; // Ignore commands from users who are not the owner
+    }
+
     // Command to check bot's responsiveness
     if (message.content === '!ping') {
         message.channel.send('Pong!');
@@ -79,7 +87,7 @@ client.on('messageCreate', async (message) => {
         }
     }
 
-    // // Command to ban a user (requires admin rights)
+    // Command to ban a user (requires admin rights)
     if (message.content.startsWith('!ban')) {
         if (!message.member.permissions.has('BAN_MEMBERS')) {
             return message.reply("You don't have permission to ban members.");
