@@ -14,6 +14,9 @@
       "chatbot",
       "discord.js"
    ],
+  "scripts": {
+  "start": "node bot.js"
+   }
    "author": "ripsnotntear@gmail.com",
    "license": "MIT",
    "type": "commonjs",
