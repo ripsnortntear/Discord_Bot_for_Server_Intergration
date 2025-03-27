@@ -1,6 +1,6 @@
 # Discord SSH Bot
 
-This is a Discord bot that allows users to execute SSH commands on a remote server directly from a Discord channel. The bot can perform various administrative tasks such as kicking and banning users, deleting channels, and managing server metrics. This is used mainly for a specific use case where the server bot is online but the server itself is not responding to ssh login. At that point we should be able to issue a `!restart command`
+This is a Discord bot that allows users to execute SSH commands on a remote server directly from a Discord channel. The bot can perform various administrative tasks such as kicking and banning users, deleting channels, and managing server metrics. This is used mainly for a specific use case where the server bot is online but the server itself is not responding to ssh login. At that point we should be able to issue a `!restart` command!
 
 ## Features
 
