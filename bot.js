@@ -116,7 +116,8 @@ client.on('messageCreate', async (message) => {
         } else {
             message.reply("You need to mention a channel to delete!");
         }
-        
+    }
+
     // Command to delete the server (requires admin rights)
     if (message.content === '!deleteServer') {
         if (!message.member.permissions.has('ADMINISTRATOR')) {
