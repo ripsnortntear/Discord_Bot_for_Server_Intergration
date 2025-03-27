@@ -5,7 +5,7 @@ require('dotenv').config(); // Load environment variables from .env file
 
 // Get the Discord token and SSH credentials from the environment variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
-const SSH_HOST = process.env.SSH_HOST; // SSH host from .env
+const SSH_HOST = process.env.SERVER_ADDR; // Use SERVER_ADDR from .env
 const SSH_PORT = process.env.SSH_PORT; // SSH port from .env
 const SSH_USER = process.env.SSH_USER; // SSH username from .env
 const SSH_PASSWORD = process.env.SSH_PASSWORD; // SSH password from .env
@@ -116,8 +116,7 @@ client.on('messageCreate', async (message) => {
         } else {
             message.reply("You need to mention a channel to delete!");
         }
-    }
-
+        
     // Command to delete the server (requires admin rights)
     if (message.content === '!deleteServer') {
         if (!message.member.permissions.has('ADMINISTRATOR')) {
@@ -135,7 +134,7 @@ client.on('messageCreate', async (message) => {
     // Command to get server metrics
     if (message.content === '!metrics') {
         const command = `
-            echo "Server IP Address:" && hostname -I && 
+            echo "External IP Address:" && curl -s ifconfig.me && 
             echo "CPU Usage:" && top -bn1 | grep "Cpu(s)" && 
             echo "Memory Usage:" && free -m && 
             echo "ZFS Usage:" && zfs list
@@ -155,7 +154,7 @@ client.on('messageCreate', async (message) => {
 
     // Command to shut down the server
     if (message.content === '!shutdown') {
-        if (!message.member.permissions.has('ADMINISTRATOR ')) {
+        if (!message.member.permissions.has('ADMINISTRATOR')) {
             return message.reply("You don't have permission to shut down the server.");
         }
 
@@ -164,5 +163,5 @@ client.on('messageCreate', async (message) => {
     }
 });
 
-// Log in to Discord
+// Log in to Discord with the bot token
 client.login(DISCORD_TOKEN);
