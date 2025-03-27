@@ -1,3 +1,5 @@
+/* jshint esversion: 8 */
+
 // Import required packages
 const { Client, GatewayIntentBits } = require('discord.js');
 const { Client: SSHClient } = require('ssh2');
@@ -77,7 +79,7 @@ client.on('messageCreate', async (message) => {
         }
     }
 
-    // Command to ban a user (requires admin rights)
+    // // Command to ban a user (requires admin rights)
     if (message.content.startsWith('!ban')) {
         if (!message.member.permissions.has('BAN_MEMBERS')) {
             return message.reply("You don't have permission to ban members.");
@@ -116,20 +118,6 @@ client.on('messageCreate', async (message) => {
         } else {
             message.reply("You need to mention a channel to delete!");
         }
-    }
-
-    // Command to delete the server (requires admin rights)
-    if (message.content === '!deleteServer') {
-        if (!message.member.permissions.has('ADMINISTRATOR')) {
-            return message.reply("You don't have permission to delete the server.");
-        }
-
-        message.guild.delete('Server deleted by bot command').then(() => {
-            message.channel.send('The server has been deleted.');
-        }).catch(err => {
-            message.reply('I was unable to delete the server');
-            console.error(err);
-        });
     }
 
     // Command to get server metrics
