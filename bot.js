@@ -1,5 +1,3 @@
-/* jshint esversion: 8 */
-
 // Import required packages
 const { Client, GatewayIntentBits } = require('discord.js');
 const { Client: SSHClient } = require('ssh2');
