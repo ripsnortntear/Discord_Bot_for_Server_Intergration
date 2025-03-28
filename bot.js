@@ -25,20 +25,28 @@ function executeSSHCommand(command, message) {
         conn.exec(command, (err, stream) => {
             if (err) {
                 console.error('Error executing command:', err);
-                return message.reply('Error executing command.');
+                message.reply('Error executing command.');
+                logCommandResponse(message.content, 'Error executing command.');
+                return;
             }
             let output = '';
             stream.on('close', () => {
                 conn.end();
                 console.log(`Command output: ${output}`);
                 message.channel.send(`\`\`\`\n${output}\n\`\`\``);
+                logCommandResponse(message.content, output);
             }).on('data', data => output += data)
               .stderr.on('data', data => {
                   console.error(`Error: ${data}`);
                   message.reply(`Error: ${data}`);
+                  logCommandResponse(message.content, `Error: ${data}`);
               });
         });
     }).connect({ host: SERVER_ADDR, port: SSH_PORT, username: SSH_USER, password: SSH_PASSWORD });
+}
+
+function logCommandResponse(command, response) {
+    console.log(`Command: ${command}\nResponse: ${response}`);
 }
 
 client.on('messageCreate', async message => {
@@ -48,57 +56,83 @@ client.on('messageCreate', async message => {
 
     if (content === '!ping') {
         console.log('Ping command received');
-        return channel.send('Pong!');
+        const response = 'Pong!';
+        channel.send(response);
+        logCommandResponse(content, response);
+        return;
     }
 
     if (content.startsWith('!kick') || content.startsWith('!ban')) {
         const action = content.startsWith('!kick') ? 'kick' : 'ban';
         if (!member.permissions.has(action === 'kick' ? PermissionsBitField.Flags.KickMembers : PermissionsBitField.Flags.BanMembers)) {
-            console.log(`User  ${member.user.tag} attempted to ${action} without permission.`);
-            return message.reply(`You don't have permission to ${action} members.`);
+            const response = `You don't have permission to ${action} members.`;
+            console.log(`User   ${member.user.tag} attempted to ${action} without permission.`);
+            message.reply(response);
+            logCommandResponse(content, response);
+            return;
         }
 
         const user = mentions.users.first();
         if (!user) {
-            console.log(`User  ${member.user.tag} did not mention a user to ${action}.`);
-            return message.reply(`You need to mention a user to ${action}!`);
+            const response = `You need to mention a user to ${action}!`;
+            console.log(`User   ${member.user.tag} did not mention a user to ${action}.`);
+            message.reply(response);
+            logCommandResponse(content, response);
+            return;
         }
 
         const targetMember = guild.members.cache.get(user.id);
         if (!targetMember) {
-            console.log(`User  ${user.tag} is not in the guild.`);
-            return message.reply("That user isn't in this guild!");
+            const response = "That user isn't in this guild!";
+            console.log(`User   ${user.tag} is not in the guild.`);
+            message.reply(response);
+            logCommandResponse(content, response);
+            return;
         }
 
         try {
             await targetMember[action](`Optional reason for ${action}ing`);
-            console.log(`${user.tag} has been ${action}ed by ${member.user.tag}.`);
-            channel.send(`${user.tag} has been ${action}ed.`);
+            const response = `${user.tag} has been ${action}ed.`;
+            console.log(response);
+            channel.send(response);
+            logCommandResponse(content, response);
         } catch (err) {
             console.error(`Failed to ${action} ${user.tag}:`, err);
-            message.reply(`I was unable to ${action} the member`);
+            const response = `I was unable to ${action} the member`;
+            message.reply(response);
+            logCommandResponse(content, response);
         }
     }
 
     if (content.startsWith('!deleteChannel')) {
         if (!member.permissions.has(PermissionsBitField.Flags.ManageChannels)) {
-            console.log(`User  ${member.user.tag} attempted to delete a channel without permission.`);
-            return message.reply("You don't have permission to delete channels.");
+            const response = "You don't have permission to delete channels.";
+            console.log(`User   ${member.user.tag} attempted to delete a channel without permission.`);
+            message.reply(response);
+            logCommandResponse(content, response);
+            return;
         }
 
         const channelToDelete = mentions.channels.first();
         if (!channelToDelete) {
-            console.log(`User  ${member.user.tag} did not mention a channel to delete.`);
-            return message.reply("You need to mention a channel to delete!");
+            const response = "You need to mention a channel to delete!";
+            console.log(`User   ${member.user.tag} did not mention a channel to delete.`);
+            message.reply(response);
+            logCommandResponse(content, response);
+            return;
         }
 
         try {
             await channelToDelete.delete('Optional reason for deletion');
-            console.log(`${channelToDelete.name} has been deleted by ${member.user.tag}.`);
-            channel.send(`${channelToDelete.name} has been deleted.`);
+            const response = `${channelToDelete.name} has been deleted.`;
+            console.log(response);
+            channel.send(response);
+            logCommandResponse(content, response);
         } catch (err) {
             console.error(`Failed to delete channel ${channelToDelete.name}:`, err);
-            message.reply('I was unable to delete the channel');
+            const response = 'I was unable to delete the channel';
+            message.reply(response);
+            logCommandResponse(content, response);
         }
     }
 
@@ -115,17 +149,23 @@ client.on('messageCreate', async message => {
         `;
         console.log('Metrics command received');
         executeSSHCommand(command, message);
+        return;
     }
 
     if (content === '!restart' || content === '!shutdown') {
         if (!member.permissions.has(PermissionsBitField.Flags.Administrator)) {
-            console.log(`User  ${member.user.tag} attempted to ${content.slice(1)} the server without permission.`);
-            return message.reply(`You don't have permission to ${content.slice(1)} the server.`);
+            const response = `You don't have permission to ${content.slice(1)} the server.`;
+            console.log(`User ${member.user.tag} attempted to ${content.slice(1)} the server without permission.`);
+            message.reply(response);
+            logCommandResponse(content, response);
+            return;
         }
 
-        const command = `echo ${SUDO_COMMAND_PASSWORD} | sudo -S ${content === '!restart' ? 'reboot' : 'shutdown now'}`;
+        // Wrapping the command in a shell command to handle echo and sudo properly
+        const command = `echo "${SUDO_COMMAND_PASSWORD}" | sudo -S ${content === '!restart' ? 'reboot' : 'shutdown now'}`;
         console.log(`Executing server ${content.slice(1)} command`);
         executeSSHCommand(command, message);
+        return;
     }
 });
 
