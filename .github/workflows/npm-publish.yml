@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18  # Updated to the latest LTS version within your specified range
+          node-version: '18'  # Updated to the latest LTS version
       - name: Install dependencies
         run: npm ci  # Use npm ci to install dependencies from package-lock.json
 
@@ -29,11 +29,11 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18  # Updated to the latest LTS version within your specified range
+          node-version: '18'  # Updated to the latest LTS version
           registry-url: https://registry.npmjs.org/
       - name: Install dependencies
         run: npm ci  # Use npm ci to ensure the exact versions from package-lock.json are installed
       - name: Publish package
         run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.npm_token }}  # Ensure you have this secret set in your repository
+          NODE_AUTH_TOKEN: ${{ secrets.npm_token }}  # Ensure this secret is set in your repository
