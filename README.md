@@ -29,7 +29,7 @@ This is a Discord bot that allows users to execute SSH commands on a remote serv
 
    ```bash
    npm init -y
-   npm install ci discord.js ssh2 dotenv
+   npm install discord.js ssh2 dotenv
    
 3. **Create a .env file in the root directory**<br>
    Replace the placeholders with your actual credentials.
