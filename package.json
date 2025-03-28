@@ -1,6 +1,6 @@
 {
   "name": "dbsi",
-  "version": "1.1.4",
+  "version": "1.1.6",
   "description": "A Discord bot for SSH commands and server management tasks",
   "main": "bot.js",
   "scripts": {
@@ -25,8 +25,8 @@
     "discord.js": "^14.18.0",
     "dotenv": "^16.4.7",
     "ssh2": "^1.16.0",
-    "rimraf": "^4.0.0",
-    "glob": "^9.0.0"
+    "rimraf": "^6.0.1",
+    "glob": "^11.0.1"
   },
   "devDependencies": {
     "eslint": "^9.0.0",
