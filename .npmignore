@@ -14,12 +14,6 @@ test/
 tests/
 *.spec.js
 *.test.js
-package-lock.json
-.github/workflows/npm-publish.yml
-.gitignore
-.npmignore
-MIT.license
-README.md
 
 # Ignore documentation
 docs/
@@ -36,5 +30,9 @@ Thumbs.db
 
 # Ignore other files
 *.md
-README.md
-LICENSE
+package-lock.json
+*.tgz
+.npmignore
+.github/workflows/npm-publish.yml
+.gitignore
+MIT.license
