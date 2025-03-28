@@ -22,8 +22,8 @@ This is a Discord bot that allows users to execute SSH commands on a remote serv
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/ripsnortntear/discord-ssh-bot.git
-   cd discord-ssh-bot
+   git clone https://github.com/ripsnortntear/Discord_Bot_for_Server_Intergration.git
+   cd Discord_Bot_for_Server_Intergration
 
 2. **Install dependencies**
 
