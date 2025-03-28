@@ -27,8 +27,8 @@
     "ssh2": "^1.13.0"
   },
   "devDependencies": {
-    "eslint": "^8.42.0",
-    "nodemon": "^2.0.22"
+    "eslint": "^8.42.0",  // Update this to the latest version
+    "nodemon": "^2.0.22"   // Update this to the latest version
   },
   "engines": {
     "node": ">=16.9.0"
