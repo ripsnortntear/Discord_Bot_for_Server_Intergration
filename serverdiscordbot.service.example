@@ -4,9 +4,9 @@ After=network.target
 
 [Service]
 Type=simple
-User=SERVER_USERNAME
-WorkingDirectory=/home/SERVER_USERNAME/discordbot
-ExecStart=/usr/bin/node /home/SERVER_USERNAME/discordbot/bot.js
+User=$USER
+WorkingDirectory=/home/$USER/foo
+ExecStart=/usr/bin/node /home/$USER/foo/bot.js
 Restart=always
 RestartSec=5
 
