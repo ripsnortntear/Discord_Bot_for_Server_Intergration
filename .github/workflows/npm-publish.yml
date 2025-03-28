@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 18  # Updated to the latest LTS version within your specified range
       - name: Install dependencies
         run: npm ci  # Use npm ci to install dependencies from package-lock.json
 
@@ -29,7 +29,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 18  # Updated to the latest LTS version within your specified range
           registry-url: https://registry.npmjs.org/
       - name: Install dependencies
         run: npm ci  # Use npm ci to ensure the exact versions from package-lock.json are installed
