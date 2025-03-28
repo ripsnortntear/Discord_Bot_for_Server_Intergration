@@ -14,7 +14,7 @@ const client = new Client({
 const commands = new Map();
 
 // Whitelist of allowed SSH commands
-const allowedSSHCommands = new Set(['reboot', 'shutdown now', 'metrics']);
+const allowedSSHCommands = new Set(['metrics', 'restart', 'shutdown']);
 
 // Utility function to check permissions
 function checkPermissionsAndRespond(member, requiredPermission, action, message) {
@@ -42,17 +42,17 @@ const kickCommand = {
     name: 'kick',
     description: 'Kick a user from the server.',
     permissions: PermissionsBitField.Flags.KickMembers,
-    handler: async (message, args, member) => {
-        // Extract the user mentioned for kicking
-        const username = message.mentions.users.first();
-        // Get the reason for kicking, defaulting if not provided
-        const reason = args.slice(1).join(' ') || 'No reason provided.';
+    handler: async (message, args) => {
+        const username = message.mentions.users.first(); // Extract the user mentioned for kicking
+        const reason = args.slice(1).join(' ') || 'No reason provided.'; // Get reason for kicking
 
-        // Check if a user was mentioned and proceed
         if (username) {
-            // Uncomment for actual kick implementation
-            // await message.guild.members.kick(username.id, { reason });
-            await message.reply(`User ${username.tag} has been kicked. Reason: ${reason}`);
+            try {
+                await message.guild.members.kick(username.id, { reason }); // Kick the user
+                await message.reply(`User ${username.tag} has been kicked. Reason: ${reason}`);
+            } catch (err) {
+                await message.reply('Failed to kick the user.'); // Catch and handle errors
+            }
         } else {
             await message.reply("You need to mention a user to kick.");
         }
@@ -64,36 +64,102 @@ const banCommand = {
     name: 'ban',
     description: 'Ban a user from the server.',
     permissions: PermissionsBitField.Flags.BanMembers,
-    handler: async (message, args, member) => {
-        // Extract the user mentioned for banning
-        const username = message.mentions.users.first();
-        // Get the reason for banning, defaulting if not provided
-        const reason = args.slice(1).join(' ') || 'No reason provided.';
+    handler: async (message, args) => {
+        const username = message.mentions.users.first(); // Extract the user mentioned for banning
+        const reason = args.slice(1).join(' ') || 'No reason provided.'; // Get reason for banning
 
-        // Check if a user was mentioned and proceed
         if (username) {
-            // Uncomment for actual ban implementation
-            // await message.guild.members.ban(username.id, { reason });
-            await message.reply(`User ${username.tag} has been banned. Reason: ${reason}`);
+            try {
+                await message.guild.members.ban(username.id, { reason }); // Ban the user
+                await message.reply(`User ${username.tag} has been banned. Reason: ${reason}`);
+            } catch (err) {
+                await message.reply('Failed to ban the user.'); // Catch and handle errors
+            }
         } else {
             await message.reply("You need to mention a user to ban.");
         }
     }
 };
 
-// Command handler for deleting the current channel
+// Command handler for deleting a channel
 const deleteChannelCommand = {
-    name: 'deletechannel',
-    description: 'Delete the current channel.',
+    name: 'deleteChannel',
+    description: 'Delete a mentioned channel.',
     permissions: PermissionsBitField.Flags.ManageChannels,
-    handler: async (message, args, member) => {
-        const channel = message.channel; // Reference to the channel to delete
-        try {
-            await channel.delete(); // Attempt to delete the channel
-            await message.reply('Channel has been deleted.'); // Confirm deletion
-        } catch (err) {
-            await message.reply('Unable to delete the channel.'); // Handle error during deletion
+    handler: async (message) => {
+        const channel = message.mentions.channels.first(); // Extract the channel mentioned
+
+        if (channel) {
+            try {
+                await channel.delete(); // Attempt to delete the channel
+                await message.reply('Channel has been deleted.'); // Confirm deletion
+            } catch (err) {
+                await message.reply('Unable to delete the channel.'); // Handle errors
+            }
+        } else {
+            await message.reply("You need to mention a channel to delete.");
         }
+    }
+};
+
+// Command handler for retrieving server metrics via SSH
+const metricsCommand = {
+    name: 'metrics',
+    description: 'Retrieve and display server metrics (CPU, memory, etc.) via SSH.',
+    handler: async (message) => {
+        // Notify the user about command execution
+        await message.reply('Executing command: `metrics`, please wait...');
+        const cmd = `ssh user@server 'top -b -n 1'`; // Example SSH command to get metrics
+
+        exec(cmd, { timeout: 10000 }, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`Error executing command: ${stderr}`);
+                message.reply('Failed to retrieve metrics.');
+                return;
+            }
+            // Send the results of the command execution
+            message.reply(`Server Metrics:\n\`\`\`${stdout}\`\`\``); // Use code block for formatting
+        });
+    }
+};
+
+// Command handler for restarting the server
+const restartCommand = {
+    name: 'restart',
+    description: 'Restart the server (requires ADMINISTRATOR permission).',
+    permissions: PermissionsBitField.Flags.Administrator,
+    handler: async (message) => {
+        await message.reply('Executing restart command, please wait...');
+        const cmd = `sudo reboot`; // SSH command to restart the server
+
+        exec(cmd, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`Error executing command: ${stderr}`);
+                message.reply('Failed to execute restart command.');
+                return;
+            }
+            message.reply('Server is restarting.'); // Notify user about restart command execution
+        });
+    }
+};
+
+// Command handler for shutting down the server
+const shutdownCommand = {
+    name: 'shutdown',
+    description: 'Shut down the server (requires ADMINISTRATOR permission).',
+    permissions: PermissionsBitField.Flags.Administrator,
+    handler: async (message) => {
+        await message.reply('Executing shutdown command, please wait...');
+        const cmd = `sudo shutdown now`; // SSH command to shut down the server
+
+        exec(cmd, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`Error executing command: ${stderr}`);
+                message.reply('Failed to execute shutdown command.');
+                return;
+            }
+            message.reply('Server is shutting down.'); // Notify user about shutdown command execution
+        });
     }
 };
 
@@ -124,7 +190,7 @@ client.on('messageCreate', async (message) => {
         if (command) {
             const hasPermission = checkPermissionsAndRespond(member, command.permissions, `execute the command ${command.name}`, message);
             if (hasPermission) {
-                await command.handler(message, args, member); // Handle command if permissions are granted
+                await command.handler(message, args); // Handle command if permissions are granted
             }
         } else if (allowedSSHCommands.has(commandName.slice(1))) {
             // Handle case for allowed SSH commands
@@ -157,6 +223,9 @@ commands.set(pingCommand.name, pingCommand); // Registering the ping command
 commands.set(kickCommand.name, kickCommand);
 commands.set(banCommand.name, banCommand);
 commands.set(deleteChannelCommand.name, deleteChannelCommand);
+commands.set(metricsCommand.name, metricsCommand); // Registering the server metrics command
+commands.set(restartCommand.name, restartCommand); // Registering the restart command
+commands.set(shutdownCommand.name, shutdownCommand); // Registering the shutdown command
 
 // Bot login using the token from the environment variables
 client.login(process.env.TOKEN);
