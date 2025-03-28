@@ -14,6 +14,7 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 README.md
 MIT.license
 .github/workflows/npm-publish.yml
+.gitignore
 
 # Runtime data
 pids
