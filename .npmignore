@@ -1,0 +1,40 @@
+# Ignore node_modules directory
+node_modules/
+
+# Ignore build artifacts
+dist/
+build/
+
+# Ignore configuration files
+*.log
+*.local
+
+# Ignore test files
+test/
+tests/
+*.spec.js
+*.test.js
+package-lock.json
+.github/workflows/npm-publish.yml
+.gitignore
+.npmignore
+MIT.license
+README.md
+
+# Ignore documentation
+docs/
+
+# Ignore IDE/editor specific files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
+
+# Ignore other files
+*.md
+README.md
+LICENSE
