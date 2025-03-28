@@ -40,5 +40,6 @@
     "bot.js",
     "package.json",
     "package-lock.json"
-  ]
+  ],
+  "type": "commonjs"
 }
