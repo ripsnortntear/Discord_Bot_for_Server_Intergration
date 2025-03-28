@@ -35,12 +35,12 @@ This is a Discord bot that allows users to execute SSH commands on a remote serv
    Replace the placeholders with your actual credentials.
    
    ```bash
-   DISCORD_TOKEN=your_discord_bot_token
-   SERVER_ADDR=your_server_address
-   SSH_PORT=your_ssh_port
-   SSH_USER=your_ssh_username
-   SSH_PASSWORD=your_ssh_password
-   SUDO_COMMAND_PASSWORD=your_sudo_password
+   DISCORD_TOKEN=INSERT_TOKEN_HERE
+   SERVER_ADDR=INSERT_SERVER_ADDRESS_HERE
+   SSH_PORT=INSERT_SSH_PORT_HERE
+   SSH_USER=INSERT_SSH_USER_HERE
+   SSH_PASSWORD=INSERT_SSH_PASSWORD_HERE
+   SUDO_COMMAND_PASSWORD=SUDO_PASSWORD_HERE
 
 4. **Run the bot**
 
