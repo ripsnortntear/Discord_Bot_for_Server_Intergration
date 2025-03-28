@@ -1,4 +1,4 @@
-# This workflow will publish a package to GitHub Packages when a release is created
+# This workflow will publish a package to npm when a release is created
 # For more information see: https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
 
 name: dbsi
@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: 20
       - name: Install dependencies
-        run: npm ci
+        run: npm ci  # Use npm ci to install dependencies from package-lock.json
 
   publish-npm:
     needs: build
@@ -32,8 +32,8 @@ jobs:
           node-version: 20
           registry-url: https://registry.npmjs.org/
       - name: Install dependencies
-        run: npm install discord.js ssh2 dotenv
+        run: npm ci  # Use npm ci to ensure the exact versions from package-lock.json are installed
       - name: Publish package
         run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
+          NODE_AUTH_TOKEN: ${{ secrets.npm_token }}  # Ensure you have this secret set in your repository
