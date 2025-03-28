@@ -44,13 +44,31 @@ client.on('messageCreate', async message => {
         **!ping**: Responds with "Pong!"
         **!kick @user**: Kicks the mentioned user from the server.
         **!ban @user**: Bans the mentioned user from the server.
-        **!deleteChannel @channel**: Deletes the mentioned channel.
-        **!metrics**: Displays server metrics (CPU, memory, etc.).
+		**!metrics**: Displays server metrics (CPU, memory, etc.).
         **!restart**: Restarts the server (Admin only).
         **!shutdown**: Shuts down the server (Admin only).
+        **!deleteChannel <#channelID>**: Deletes the specified channel from the server.  \`!deleteChannel <#123456789012345678>\`
         `;
         return channel.send(helpMessage);
     }
+	
+	
+const helpMessage = `
+**Available Commands:**
+- **!ping**: Responds with "Pong!"
+- **!kick @user**: Kicks the mentioned user from the server.
+- **!ban @user**: Bans the mentioned user from the server.
+- **!deleteChannel <#channelID>**: Deletes the specified channel from the server. 
+  - **Usage**: To delete a channel, you need to mention it using its ID. For example:
+    \`\`\`
+    !deleteChannel <#123456789012345678>
+    \`\`\`
+  - **Note**: Make sure the bot has the \`Manage Channels\` permission and that you have the necessary permissions to delete channels.
+- **!metrics**: Displays server metrics (CPU, memory, etc.).
+- **!restart**: Restarts the server (Admin only).
+- **!shutdown**: Shuts down the server (Admin only).
+`;
+	
 
     if (content.startsWith('!kick') || content.startsWith('!ban')) {
         const action = content.startsWith('!kick') ? 'kick' : 'ban';
