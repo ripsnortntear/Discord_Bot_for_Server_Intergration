@@ -44,7 +44,7 @@ client.on('messageCreate', async message => {
         **!ping**: Responds with "Pong!"
         **!kick @user**: Kicks the mentioned user from the server.
         **!ban @user**: Bans the mentioned user from the server.
-		**!metrics**: Displays server metrics (CPU, memory, etc.).
+        **!metrics**: Displays server metrics (CPU, memory, etc.).
         **!restart**: Restarts the server (Admin only).
         **!shutdown**: Shuts down the server (Admin only).
         **!deleteChannel <#channelID>**: Deletes the specified channel from the server.  \`!deleteChannel <#123456789012345678>\`
