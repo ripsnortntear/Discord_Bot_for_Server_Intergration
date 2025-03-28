@@ -1,164 +1,99 @@
 /* jshint esversion: 8 */
 
-// Import required packages
-const { Client, GatewayIntentBits } = require('discord.js');
+const { Client, GatewayIntentBits, PermissionsBitField } = require('discord.js');
 const { Client: SSHClient } = require('ssh2');
-require('dotenv').config(); // Load environment variables from .env file
+require('dotenv').config();
 
-// Get the Discord token and SSH credentials from the environment variables
-const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
-const SSH_HOST = process.env.SERVER_ADDR; // Use SERVER_ADDR from .env
-const SSH_PORT = process.env.SSH_PORT; // SSH port from .env
-const SSH_USER = process.env.SSH_USER; // SSH username from .env
-const SSH_PASSWORD = process.env.SSH_PASSWORD; // SSH password from .env
-const SUDO_COMMAND_PASSWORD = process.env.SUDO_COMMAND_PASSWORD; // Sudo password from .env
+const { DISCORD_TOKEN, SERVER_ADDR, SSH_PORT, SSH_USER, SSH_PASSWORD, SUDO_COMMAND_PASSWORD } = process.env;
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
-
-// Event listener for when the bot is ready
-client.once('ready', () => {
-    console.log(`Logged in as ${client.user.tag}!`);
+const client = new Client({ 
+    intents: [
+        GatewayIntentBits.Guilds, 
+        GatewayIntentBits.GuildMessages, 
+        GatewayIntentBits.MessageContent
+    ] 
 });
 
-// Function to execute SSH commands
+client.once('ready', () => console.log(`Logged in as ${client.user.tag}!`));
+
 function executeSSHCommand(command, message) {
     const conn = new SSHClient();
     conn.on('ready', () => {
         conn.exec(command, (err, stream) => {
-            if (err) {
-                message.reply('Error executing command.');
-                return;
-            }
+            if (err) return message.reply('Error executing command.');
             let output = '';
-            stream.on('close', (code, signal) => {
+            stream.on('close', () => {
                 conn.end();
                 message.channel.send(`\`\`\`\n${output}\n\`\`\``);
-            }).on('data', (data) => {
-                output += data;
-            }).stderr.on('data', (data) => {
-                message.reply(`Error: ${data}`);
-            });
+            }).on('data', data => output += data)
+              .stderr.on('data', data => message.reply(`Error: ${data}`));
         });
-    }).connect({
-        host: SSH_HOST,
-        port: SSH_PORT,
-        username: SSH_USER,
-        password: SSH_PASSWORD,
-    });
+    }).connect({ host: SERVER_ADDR, port: SSH_PORT, username: SSH_USER, password: SSH_PASSWORD });
 }
 
-// Event listener for message creation
-client.on('messageCreate', async (message) => {
-    if (message.author.bot) return; // Ignore bot messages
+client.on('messageCreate', async message => {
+    if (message.author.bot || message.author.id !== message.guild.ownerId) return;
 
-    // Check if the message is from the server owner
-    const guild = message.guild;
-    const ownerId = guild.ownerId; // Get the owner ID of the guild
+    const { content, member, mentions, guild, channel } = message;
 
-    if (message.author.id !== ownerId) {
-        return; // Ignore commands from users who are not the owner
-    }
+    if (content === '!ping') return channel.send('Pong!');
 
-    // Command to check bot's responsiveness
-    if (message.content === '!ping') {
-        message.channel.send('Pong!');
-    }
+    if (content.startsWith('!kick') || content.startsWith('!ban')) {
+        const action = content.startsWith('!kick') ? 'kick' : 'ban';
+        if (!member.permissions.has(action === 'kick' ? PermissionsBitField.Flags.KickMembers : PermissionsBitField.Flags.BanMembers))
+            return message.reply(`You don't have permission to ${action} members.`);
 
-    // Command to kick a user (requires admin rights)
-    if (message.content.startsWith('!kick')) {
-        if (!message.member.permissions.has('KICK_MEMBERS')) {
-            return message.reply("You don't have permission to kick members.");
-        }
+        const user = mentions.users.first();
+        if (!user) return message.reply(`You need to mention a user to ${action}!`);
 
-        const userToKick = message.mentions.users.first();
-        if (userToKick) {
-            const member = message.guild.members.cache.get(userToKick.id);
-            if (member) {
-                await member.kick('Optional reason for kicking').catch(err => {
-                    message.reply('I was unable to kick the member');
-                    console.error(err);
-                });
-                message.channel.send(`${userToKick.tag} has been kicked.`);
-            } else {
-                message.reply("That user isn't in this guild!");
-            }
-        } else {
-            message.reply("You need to mention a user to kick!");
+        const targetMember = guild.members.cache.get(user.id);
+        if (!targetMember) return message.reply("That user isn't in this guild!");
+
+        try {
+            await targetMember[action](`Optional reason for ${action}ing`);
+            channel.send(`${user.tag} has been ${action}ed.`);
+        } catch (err) {
+            message.reply(`I was unable to ${action} the member`);
+            console.error(err);
         }
     }
 
-    // Command to ban a user (requires admin rights)
-    if (message.content.startsWith('!ban')) {
-        if (!message.member.permissions.has('BAN_MEMBERS')) {
-            return message.reply("You don't have permission to ban members.");
-        }
-
-        const userToBan = message.mentions.users.first();
-        if (userToBan) {
-            const member = message.guild.members.cache.get(userToBan.id);
-            if (member) {
-                await member.ban({ reason: 'Optional reason for banning' }).catch(err => {
-                    message.reply('I was unable to ban the member');
-                    console.error(err);
-                });
-                message.channel.send(`${userToBan.tag} has been banned.`);
-            } else {
-                message.reply("That user isn't in this guild!");
-            }
-        } else {
-            message.reply("You need to mention a user to ban!");
-        }
-    }
-
-    // Command to delete a channel (requires manage channels permission)
-    if (message.content.startsWith('!deleteChannel')) {
-        if (!message.member.permissions.has('MANAGE_CHANNELS')) {
+    if (content.startsWith('!deleteChannel')) {
+        if (!member.permissions.has(PermissionsBitField.Flags.ManageChannels))
             return message.reply("You don't have permission to delete channels.");
-        }
 
-        const channelToDelete = message.mentions.channels.first();
-        if (channelToDelete) {
-            await channelToDelete.delete('Optional reason for deletion').catch(err => {
-                message.reply('I was unable to delete the channel');
-                console.error(err);
-            });
-            message.channel.send(`${channelToDelete.name} has been deleted.`);
-        } else {
-            message.reply("You need to mention a channel to delete!");
+        const channelToDelete = mentions.channels.first();
+        if (!channelToDelete) return message.reply("You need to mention a channel to delete!");
+
+        try {
+            await channelToDelete.delete('Optional reason for deletion');
+            channel.send(`${channelToDelete.name} has been deleted.`);
+        } catch (err) {
+            message.reply('I was unable to delete the channel');
+            console.error(err);
         }
     }
 
-    // Command to get server metrics
-    if (message.content === '!metrics') {
-        const command = `
-            echo "External IP Address:" && curl -s ifconfig.me && 
-            echo "CPU Usage:" && top -bn1 | grep "Cpu(s)" && 
-            echo "Memory Usage:" && free -m && 
-            echo "ZFS Usage:" && zfs list
-        `;
-        executeSSHCommand(command, message);
-    }
+if (content === '!metrics') {
+    const command = `
+        echo "External IP Address: " && curl -s ifconfig.me &&
+        echo "" &&  # This adds a blank line
+        echo "" &&  # This adds a blank line
+        echo "CPU Usage: " && top -bn1 | grep "Cpu(s)" &&
+        echo "" &&  # This adds a blank line
+        echo "Memory Usage: " && free -m &&
+        echo "" &&  # This adds a blank line
+        echo "ZFS Usage: " && zfs list
+    `;
+    executeSSHCommand(command, message);
+}
+    if (content === '!restart' || content === '!shutdown') {
+        if (!member.permissions.has(PermissionsBitField.Flags.Administrator))
+            return message.reply(`You don't have permission to ${content.slice(1)} the server.`);
 
-    // Command to restart the server
-    if (message.content === '!restart') {
-        if (!message.member.permissions.has('ADMINISTRATOR')) {
-            return message.reply("You don't have permission to restart the server.");
-        }
-
-        const command = `echo ${SUDO_COMMAND_PASSWORD} | sudo -S reboot`;
-        executeSSHCommand(command, message);
-    }
-
-    // Command to shut down the server
-    if (message.content === '!shutdown') {
-        if (!message.member.permissions.has('ADMINISTRATOR')) {
-            return message.reply("You don't have permission to shut down the server.");
-        }
-
-        const command = `echo ${SUDO_COMMAND_PASSWORD} | sudo -S shutdown now`;
+        const command = `echo ${SUDO_COMMAND_PASSWORD} | sudo -S ${content === '!restart' ? 'reboot' : 'shutdown now'}`;
         executeSSHCommand(command, message);
     }
 });
 
-// Log in to Discord with the bot token
 client.login(DISCORD_TOKEN);
