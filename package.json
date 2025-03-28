@@ -1,29 +1,36 @@
 {
-   "name": "dbsi",
-   "version": "1.0.2",
-   "description": "A Discord Bot for Server Integration",
-   "main": "bot.js",
-   "keywords": [
-      "discord",
-      "discord-bot",
-      "ssh",
-      "command-bot",
-      "nodejs",
-      "bot",
-      "automation",
-      "chatbot",
-      "discord.js"
-   ],
+  "name": "dbsi",
+  "version": "1.1.1",
+  "description": "A Discord bot for SSH commands and server management tasks",
+  "main": "bot.js",
   "scripts": {
-  "start": "node bot.js"
-   }
-   "author": "ripsnotntear@gmail.com",
-   "license": "MIT",
-   "type": "commonjs",
-   "dependencies": {
-      "discord.js": "^14.18.0",
-      "dotenv": "^16.4.7",
-      "ssh2": "^1.16.0",
-      "@discordjs/builders": "^1.10.0"
-   }
+    "start": "node bot.js",
+    "dev": "nodemon bot.js",
+    "lint": "eslint ."
+  },
+  "keywords": [
+    "discord",
+    "discord-bot",
+    "ssh",
+    "command-bot",
+    "nodejs",
+    "bot",
+    "automation",
+    "chatbot",
+    "discord.js"
+  ],
+  "author": "ripsnortntear@gmail.com",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^14.11.0",
+    "dotenv": "^16.1.4",
+    "ssh2": "^1.13.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.42.0",
+    "nodemon": "^2.0.22"
+  },
+  "engines": {
+    "node": ">=16.9.0"
+  }
 }
