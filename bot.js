@@ -38,6 +38,20 @@ client.on('messageCreate', async message => {
 
     if (content === '!ping') return channel.send('Pong!');
 
+    if (content === '!help') {
+        const helpMessage = `
+        **Available Commands:**
+        **!ping**: Responds with "Pong!"
+        **!kick @user**: Kicks the mentioned user from the server.
+        **!ban @user**: Bans the mentioned user from the server.
+        **!deleteChannel @channel**: Deletes the mentioned channel.
+        **!metrics**: Displays server metrics (CPU, memory, etc.).
+        **!restart**: Restarts the server (Admin only).
+        **!shutdown**: Shuts down the server (Admin only).
+        `;
+        return channel.send(helpMessage);
+    }
+
     if (content.startsWith('!kick') || content.startsWith('!ban')) {
         const action = content.startsWith('!kick') ? 'kick' : 'ban';
         if (!member.permissions.has(action === 'kick' ? PermissionsBitField.Flags.KickMembers : PermissionsBitField.Flags.BanMembers))
@@ -74,24 +88,25 @@ client.on('messageCreate', async message => {
         }
     }
 
-if (content === '!metrics') {
-    const command = `
-        echo "External IP Address: " && curl -s ifconfig.me &&
-        echo "" &&  # This adds a blank line
-        echo "" &&  # This adds a blank line
-        echo "CPU Usage: " && top -bn1 | grep "Cpu(s)" &&
-        echo "" &&  # This adds a blank line
-        echo "Memory Usage: " && free -m &&
-        echo "" &&  # This adds a blank line
-        echo "ZFS Usage: " && zfs list
-    `;
-    executeSSHCommand(command, message);
-}
+    if (content === '!metrics') {
+        const command = `
+            echo "External IP Address: " && curl -s ifconfig.me &&
+            echo "" &&  # This adds a blank line
+            echo "" &&  # This adds a blank line
+            echo "CPU Usage: " && top -bn1 | grep "Cpu(s)" &&
+            echo "" &&  # This adds a blank line
+            echo "Memory Usage: " && free -m &&
+            echo "" &&  # This adds a blank line
+            echo "ZFS Usage: " && zfs list
+        `;
+        executeSSHCommand(command, message);
+    }
+
     if (content === '!restart' || content === '!shutdown') {
         if (!member.permissions.has(PermissionsBitField.Flags.Administrator))
             return message.reply(`You don't have permission to ${content.slice(1)} the server.`);
 
-        const command = `echo ${SUDO_COMMAND_PASSWORD} | sudo -S ${content === '!restart' ? 'reboot' : 'shutdown now'}`;
+        const command = `echo "${SUDO_COMMAND_PASSWORD}" | sudo -S ${content === '!restart' ? 'reboot' : 'shutdown now'}`;
         executeSSHCommand(command, message);
     }
 });
