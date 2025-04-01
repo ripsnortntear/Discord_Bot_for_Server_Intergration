@@ -11,7 +11,7 @@ const {
 require("dotenv").config();
 
 const {
-    DISCORD_TOKEN,
+    TOKEN,
     SERVER_ADDR,
     SSH_PASSWORD,
     SSH_PORT,
@@ -225,4 +225,4 @@ client.on("messageCreate", async function (message) {
     }
 });
 
-client.login(DISCORD_TOKEN);
+client.login(TOKEN);
