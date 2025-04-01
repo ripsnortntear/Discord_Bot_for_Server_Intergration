@@ -36,3 +36,4 @@ package-lock.json
 .github/workflows/npm-publish.yml
 .gitignore
 MIT.license
+.env.example
