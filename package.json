@@ -22,11 +22,12 @@
   "author": "ripsnortntear@gmail.com",
   "license": "MIT",
   "dependencies": {
+    "ci": "^2.3.0",
     "discord.js": "^14.18.0",
     "dotenv": "^16.4.7",
-    "ssh2": "^1.16.0",
+    "glob": "^11.0.1",
     "rimraf": "^6.0.1",
-    "glob": "^11.0.1"
+    "ssh2": "^1.16.0"
   },
   "devDependencies": {
     "eslint": "^9.0.0",
