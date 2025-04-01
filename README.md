@@ -24,12 +24,14 @@ This is a Discord bot that allows users to execute SSH commands on a remote serv
    ```bash
    git clone https://github.com/ripsnortntear/Discord_Bot_for_Server_Intergration.git
    cd Discord_Bot_for_Server_Intergration
-
+   ```
+   
 2. **Install dependencies**
 
    ```bash
    npm install
    npm init -y
+   ```
       
 3. **Create a .env file in the root directory**<br>
    Replace the placeholders with your actual credentials.
@@ -41,16 +43,33 @@ This is a Discord bot that allows users to execute SSH commands on a remote serv
    SSH_PORT=INSERT_SSH_PORT_HERE
    SSH_USER=INSERT_SSH_USER_HERE
    SUDO_COMMAND_PASSWORD=SUDO_PASSWORD_HERE
-
+   ```
+   
 4. **Run the bot**
 
    ```bash
    node bot.js
-
+   ```
+   
 ## Service File Example
 
-  - [serverdiscordbot.service](serverdiscordbot.service.example)
+   ```bash
+   [Unit]
+   Description=Discord Bot Service
+   After=network.target
 
+   [Service]
+   Type=simple
+   User=$USER
+   WorkingDirectory=/home/$USER/foo
+   ExecStart=/usr/bin/node /home/$USER/foo/bot.js
+   Restart=always
+   RestartSec=5
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+    
 ## Commands
 
  - !ping: Responds with "Pong!" to check if the bot is responsive.
