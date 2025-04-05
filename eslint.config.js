@@ -27,4 +27,5 @@ const config = [
     },
 ];
 
-export default config;
+// Use CommonJS export
+module.exports = config;
