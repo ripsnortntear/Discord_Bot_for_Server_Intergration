@@ -13,6 +13,9 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 # Other files
 .github/workflows/npm-publish.yml
 .gitignore
+.npmignore
+LICENSE.md
+SECURITY.md
 package-lock.json
 
 # Runtime data
