@@ -32,7 +32,6 @@ Thumbs.db
 .github/workflows/npm-publish.yml
 .gitignore
 .npmignore
-eslint.config.js
 LICENSE.md
 SECURITY.md
 package-lock.json
