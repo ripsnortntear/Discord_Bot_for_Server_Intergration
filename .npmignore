@@ -30,9 +30,9 @@ Thumbs.db
 
 # Ignore other files
 .github/workflows/npm-publish.yml
-.eslintrc.js
 .gitignore
 .npmignore
+eslint.config.js
 LICENSE.md
 SECURITY.md
 package-lock.json
