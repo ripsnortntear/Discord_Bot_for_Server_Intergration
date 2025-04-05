@@ -1,6 +1,4 @@
-import { defineConfig } from 'eslint';
-
-export default defineConfig({
+module.exports = {
     languageOptions: {
         ecmaVersion: 2021, // Specify the ECMAScript version
         sourceType: 'module', // Allow the use of imports
@@ -24,4 +22,4 @@ export default defineConfig({
             },
         },
     ],
-});
+};
