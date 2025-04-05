@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read  # Allow read access to repository contents
+  packages: write # Allow write access to publish packages
+
 jobs:
   publish:
     runs-on: ubuntu-latest
