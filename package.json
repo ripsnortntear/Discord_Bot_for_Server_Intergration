@@ -5,8 +5,7 @@
   "main": "bot.js",
   "scripts": {
     "start": "node bot.js",
-    "dev": "nodemon bot.js",
-    "lint": "eslint ."
+    "dev": "nodemon bot.js"
   },
   "keywords": [
     "discord",
