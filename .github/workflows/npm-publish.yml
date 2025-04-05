@@ -1,0 +1,34 @@
+name: Publish to npm
+
+on:
+  release:
+    types: [created]
+
+permissions:
+  contents: read  # Allow read access to repository contents
+  packages: write # Allow write access to publish packages
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16' # Specify the Node.js version you want to use
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Pack up the files
+        run: npm pack
+
+      - name: Publish to npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} # Use a secret for your npm token
