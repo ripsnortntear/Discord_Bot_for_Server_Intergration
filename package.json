@@ -1,6 +1,6 @@
 {
   "name": "dbsi",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "A Discord bot for SSH commands and server management tasks",
   "main": "bot.js",
   "scripts": {
@@ -22,7 +22,6 @@
   "author": "ripsnortntear@gmail.com",
   "license": "MIT",
   "dependencies": {
-    "ci": "^2.3.0",
     "discord.js": "^14.18.0",
     "dotenv": "^16.4.7",
     "glob": "^11.0.1",
@@ -37,10 +36,9 @@
     "node": ">=11.2.0 <24.0.0"
   },
   "files": [
-    ".env.example",
+    "README.md",
     "bot.js",
-    "package.json",
-    "package-lock.json"
+    "package.json"
   ],
   "type": "commonjs"
 }
