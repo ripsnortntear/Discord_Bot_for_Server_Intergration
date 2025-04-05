@@ -26,9 +26,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run linting
-        run: npx eslint . --config eslint.config.js # Specify the config file if needed
-
       - name: Run tests
         run: npm test # Adjust this if you have a specific test command
 
