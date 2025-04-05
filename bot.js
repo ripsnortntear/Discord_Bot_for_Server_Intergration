@@ -1,5 +1,3 @@
-/* jshint esversion: 8 */
-
 // Import necessary modules from discord.js and ssh2
 const {
     Client,
