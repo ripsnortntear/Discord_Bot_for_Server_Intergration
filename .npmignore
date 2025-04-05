@@ -29,11 +29,9 @@ docs/
 Thumbs.db
 
 # Ignore other files
-*.md
-package-lock.json
-*.tgz
-.npmignore
 .github/workflows/npm-publish.yml
 .gitignore
-MIT.license
-.env.example
+.npmignore
+LICENSE.md
+SECURITY.md
+package-lock.json
