@@ -86,7 +86,7 @@ This is a Discord bot that allows users to execute SSH commands on a remote serv
 
 ## License
 
-  This project is licensed under the MIT License. See the [MIT License](LICENSE.md) file for details.
+  This project is licensed under the MIT License. See the [GNU General Public License v3.0](LICENSE.md) file for details.
 
 ## Acknowledgments
 
